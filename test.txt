@@ -1,0 +1,339 @@
+It seems like power shell is corrupted somehow,, to restore and scan windows system files, type in start menu "CMD" and run it as an administrator
+then run this command:
+sfc /scannow
+
+After it finishes, run this command in the same window:
+
+dism /online /cleanup-image /restorehealth
+
+restart your device afterwards and see if it helps
+
+{
+    "result": {
+        "routes": [
+            {
+                "legs": [
+                    {
+                        "distance": {
+                            "text": "1.23km",
+                            "value": 1230.0630000000003
+                        },
+                        "duration": {
+                            "text": "1 phút 59 giây",
+                            "value": 119
+                        },
+                        "endAddress": "Kết thúc!",
+                        "startAddress": "",
+                        "endLocation": {
+                            "lng": 108.21122,
+                            "lat": 16.02018
+                        },
+                        "startLocation": {
+                            "lng": 108.20923,
+                            "lat": 16.02459
+                        },
+                        "steps": [
+                            {
+                                "distance": {
+                                    "text": "79.369m",
+                                    "value": 79.369
+                                },
+                                "duration": {
+                                    "text": "8 giây",
+                                    "value": 8
+                                },
+                                "endLocation": {
+                                    "lng": 108.20993,
+                                    "lat": 16.02482
+                                },
+                                "startLocation": {
+                                    "lng": 108.20923,
+                                    "lat": 16.02459
+                                },
+                                "htmlInstructions": "Tiếp tục",
+                                "maneuver": "straight",
+                                "polyline": "uxx`BurmsSm@kC",
+                                "travelMode": "motorcycle",
+                                "streetName": ""
+                            },
+                            {
+                                "distance": {
+                                    "text": "9.117m",
+                                    "value": 9.117
+                                },
+                                "duration": {
+                                    "text": "1 giây",
+                                    "value": 1
+                                },
+                                "endLocation": {
+                                    "lng": 108.2099,
+                                    "lat": 16.0249
+                                },
+                                "startLocation": {
+                                    "lng": 108.20993,
+                                    "lat": 16.02482
+                                },
+                                "htmlInstructions": "Rẽ trái vào Đỗ Thúc Tịnh",
+                                "maneuver": "turn-left",
+                                "polyline": "czx`BawmsSOD",
+                                "travelMode": "motorcycle",
+                                "streetName": "Đỗ Thúc Tịnh"
+                            },
+                            {
+                                "distance": {
+                                    "text": "105.929m",
+                                    "value": 105.929
+                                },
+                                "duration": {
+                                    "text": "11 giây",
+                                    "value": 11
+                                },
+                                "endLocation": {
+                                    "lng": 108.20894,
+                                    "lat": 16.02466
+                                },
+                                "startLocation": {
+                                    "lng": 108.2099,
+                                    "lat": 16.0249
+                                },
+                                "htmlInstructions": "Rẽ trái",
+                                "maneuver": "turn-left",
+                                "polyline": "szx`B{vmsSn@~D",
+                                "travelMode": "motorcycle",
+                                "streetName": ""
+                            },
+                            {
+                                "distance": {
+                                    "text": "556.158m",
+                                    "value": 556.158
+                                },
+                                "duration": {
+                                    "text": "50 giây",
+                                    "value": 50
+                                },
+                                "endLocation": {
+                                    "lng": 108.21107,
+                                    "lat": 16.0201
+                                },
+                                "startLocation": {
+                                    "lng": 108.20894,
+                                    "lat": 16.02466
+                                },
+                                "htmlInstructions": "Rẽ trái vào Nguyễn Hữu Thọ",
+                                "maneuver": "turn-left",
+                                "polyline": "cyx`B{pmsSxA[xBs@dFuB|LuEVM",
+                                "travelMode": "motorcycle",
+                                "streetName": "Nguyễn Hữu Thọ"
+                            },
+                            {
+                                "distance": {
+                                    "text": "144.35m",
+                                    "value": 144.35
+                                },
+                                "duration": {
+                                    "text": "12 giây",
+                                    "value": 12
+                                },
+                                "endLocation": {
+                                    "lng": 108.21215,
+                                    "lat": 16.02087
+                                },
+                                "startLocation": {
+                                    "lng": 108.21107,
+                                    "lat": 16.0201
+                                },
+                                "htmlInstructions": "Rẽ trái vào Cách Mạng Tháng Tám, QL.14B",
+                                "maneuver": "turn-left",
+                                "polyline": "s|w`Be~msSoBwCi@_A",
+                                "travelMode": "motorcycle",
+                                "streetName": "Cách Mạng Tháng Tám, QL.14B"
+                            },
+                            {
+                                "distance": {
+                                    "text": "91.627m",
+                                    "value": 91.627
+                                },
+                                "duration": {
+                                    "text": "11 giây",
+                                    "value": 11
+                                },
+                                "endLocation": {
+                                    "lng": 108.21271,
+                                    "lat": 16.02025
+                                },
+                                "startLocation": {
+                                    "lng": 108.21215,
+                                    "lat": 16.02087
+                                },
+                                "htmlInstructions": "Rẽ phải vào Kiệt 111 Cách Mạng Tháng Tám",
+                                "maneuver": "turn-right",
+                                "polyline": "max`B}dnsSzBoB",
+                                "travelMode": "motorcycle",
+                                "streetName": "Kiệt 111 Cách Mạng Tháng Tám"
+                            },
+                            {
+                                "distance": {
+                                    "text": "98.221m",
+                                    "value": 98.221
+                                },
+                                "duration": {
+                                    "text": "12 giây",
+                                    "value": 12
+                                },
+                                "endLocation": {
+                                    "lng": 108.212,
+                                    "lat": 16.01969
+                                },
+                                "startLocation": {
+                                    "lng": 108.21271,
+                                    "lat": 16.02025
+                                },
+                                "htmlInstructions": "Rẽ phải vào Hẻm 20/111 Cách Mạng Tháng Tám",
+                                "maneuver": "turn-right",
+                                "polyline": "q}w`BmhnsSnBlC",
+                                "travelMode": "motorcycle",
+                                "streetName": "Hẻm 20/111 Cách Mạng Tháng Tám"
+                            },
+                            {
+                                "distance": {
+                                    "text": "42.391m",
+                                    "value": 42.391
+                                },
+                                "duration": {
+                                    "text": "5 giây",
+                                    "value": 5
+                                },
+                                "endLocation": {
+                                    "lng": 108.21167,
+                                    "lat": 16.01947
+                                },
+                                "startLocation": {
+                                    "lng": 108.212,
+                                    "lat": 16.01969
+                                },
+                                "htmlInstructions": "Tiếp tục",
+                                "maneuver": "straight",
+                                "polyline": "azw`B_dnsSj@`A",
+                                "travelMode": "motorcycle",
+                                "streetName": ""
+                            },
+                            {
+                                "distance": {
+                                    "text": "68.834m",
+                                    "value": 68.834
+                                },
+                                "duration": {
+                                    "text": "6 giây",
+                                    "value": 6
+                                },
+                                "endLocation": {
+                                    "lng": 108.2114,
+                                    "lat": 16.02003
+                                },
+                                "startLocation": {
+                                    "lng": 108.21167,
+                                    "lat": 16.01947
+                                },
+                                "htmlInstructions": "Rẽ phải vào Nguyễn Hữu Thọ",
+                                "maneuver": "turn-right",
+                                "polyline": "uxw`B}ansSeBr@I@",
+                                "travelMode": "motorcycle",
+                                "streetName": "Nguyễn Hữu Thọ"
+                            },
+                            {
+                                "distance": {
+                                    "text": "10.127m",
+                                    "value": 10.127
+                                },
+                                "duration": {
+                                    "text": "1 giây",
+                                    "value": 1
+                                },
+                                "endLocation": {
+                                    "lng": 108.21132,
+                                    "lat": 16.01999
+                                },
+                                "startLocation": {
+                                    "lng": 108.2114,
+                                    "lat": 16.02003
+                                },
+                                "htmlInstructions": "Rẽ trái ngay lập tức",
+                                "maneuver": "turn-sharp-left",
+                                "polyline": "e|w`Bg`nsSFN",
+                                "travelMode": "motorcycle",
+                                "streetName": ""
+                            },
+                            {
+                                "distance": {
+                                    "text": "23.94m",
+                                    "value": 23.94
+                                },
+                                "duration": {
+                                    "text": "2 giây",
+                                    "value": 2
+                                },
+                                "endLocation": {
+                                    "lng": 108.21122,
+                                    "lat": 16.02018
+                                },
+                                "startLocation": {
+                                    "lng": 108.21132,
+                                    "lat": 16.01999
+                                },
+                                "htmlInstructions": "Rẽ phải vào Cầu Nguyễn Tri Phương",
+                                "maneuver": "turn-right",
+                                "polyline": "}{w`Bw_nsSe@R",
+                                "travelMode": "motorcycle",
+                                "streetName": "Cầu Nguyễn Tri Phương"
+                            },
+                            {
+                                "distance": {
+                                    "text": "0m",
+                                    "value": 0
+                                },
+                                "duration": {
+                                    "text": "",
+                                    "value": 0
+                                },
+                                "endLocation": {
+                                    "lng": 108.21122,
+                                    "lat": 16.02018
+                                },
+                                "startLocation": {
+                                    "lng": 108.21122,
+                                    "lat": 16.02018
+                                },
+                                "htmlInstructions": "Kết thúc!",
+                                "maneuver": "finish",
+                                "polyline": "c}w`Bc_nsS",
+                                "travelMode": "motorcycle",
+                                "streetName": ""
+                            }
+                        ]
+                    }
+                ],
+                "overviewPolyline": "uxx`BurmsSm@kCODn@~DxA[xBs@dFuB|LuEVMoBwCi@_AzBoBnBlCj@`AeBr@I@FNe@R",
+                "summary": "Đỗ Thúc Tịnh",
+                "distance": {
+                    "text": "1.23km",
+                    "value": 1230.064
+                },
+                "duration": {
+                    "text": "1 phút 59 giây",
+                    "value": 119
+                },
+                "snappedWaypoints": [
+                    {
+                        "lng": 108.20923,
+                        "lat": 16.02459
+                    },
+                    {
+                        "lng": 108.21122,
+                        "lat": 16.02018
+                    }
+                ]
+            }
+        ]
+    },
+    "code": "ok"
+}

@@ -1,0 +1,332 @@
+import 'package:flutter/material.dart';
+import 'package:map4dmap/myLocation/locationGeolocator.dart';
+import 'package:map4dmap/myLocation/locationLocation.dart';
+import 'package:map4dmap/myLocation/locationMap4d.dart';
+import 'package:map4dmap/myLocation/notificationPage.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'drawing_map_and_layers/place_marker.dart';
+import 'drawing_map_and_layers/place_poi.dart';
+import 'drawing_map_and_layers/place_building.dart';
+import 'drawing_map_and_layers/directions_renderer.dart';
+import 'drawing_map_and_layers/place_circle.dart';
+import 'drawing_map_and_layers/place_polyline.dart';
+import 'drawing_map_and_layers/place_polygon.dart';
+import 'drawing_map_and_layers/tile_overlay.dart';
+import 'drawing_map_and_layers/image_overlay.dart';
+import 'drawing_map_and_layers/page.dart';
+
+void main() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MapsDemo(),
+  ));
+}
+
+class MapsDemo extends StatefulWidget {
+  const MapsDemo({super.key});
+
+  @override
+  State<MapsDemo> createState() => MapsDemoState();
+}
+
+class MapsDemoState extends State<MapsDemo>
+    with SingleTickerProviderStateMixin {
+  final List<Map4dMapExampleAppPage> _allPages = <Map4dMapExampleAppPage>[
+    MarkerIconsPage(),
+    PlacePOIPage(),
+    PlaceBuildingPage(),
+    DirectionsRendererPage(),
+    PlaceCirclePage(),
+    PlacePolylinePage(),
+    PlacePolygonPage(),
+    TileOverlayPage(),
+    ImageOverlayPage(),
+  ];
+
+  int _selectedIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    locationGeolocator(),
+    locationMap4d(),
+    locationLocation(),
+    notificationPage()
+  ];
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<PopupMenuItem<int>> _allItems = <PopupMenuItem<int>>[];
+    for (int i = 0; i < _allPages.length; i++) {
+      _allItems.add(PopupMenuItem<int>(
+        value: i,
+        child: ListTile(
+          leading: _allPages[i].leading,
+          title: Text(_allPages[i].title),
+        ),
+      ));
+    }
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        toolbarHeight: 68,
+        automaticallyImplyLeading: false,
+        // ignore: prefer_const_constructors
+        title: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: const Text("Map4dMap"),
+        ),
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: PopupMenuButton(itemBuilder: (context) {
+              return _allItems;
+            }, onSelected: (value) {
+              _pushPage(context, _allPages[value]);
+            }),
+          ),
+        ],
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.only(top: 39, right: 8, left: 8, bottom: 8),
+          child: Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(100)),
+                color: Colors.blue),
+          ),
+        ),
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.all(Radius.circular(100)),
+        // ),
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      // Stack(
+      //   fit: StackFit.expand,
+      //   children: [
+      //     Center(
+      //       child: _widgetOptions.elementAt(_selectedIndex),
+      //     ),
+      //     buildFloatingSearchBar(),
+      //   ],
+      // ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on),
+            label: 'Geolocator',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.time_to_leave),
+            label: 'API Google',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark_outline),
+            label: 'Google Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            label: 'Thông tin',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey[600],
+        onTap: _onItemTapped,
+        unselectedLabelStyle:
+            const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+        selectedLabelStyle:
+            const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+
+  void _pushPage(BuildContext context, Map4dMapExampleAppPage page) {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => Scaffold(
+              appBar: AppBar(title: Text(page.title)),
+              body: page,
+            )));
+  }
+
+  Widget buildFloatingSearchBar() {
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
+    return FloatingSearchBar(
+      hint: 'Tìm kiếm ở đây',
+      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+      transitionDuration: const Duration(milliseconds: 800),
+      transitionCurve: Curves.easeInOut,
+      physics: const BouncingScrollPhysics(),
+      axisAlignment: isPortrait ? 0.0 : -1.0,
+      openAxisAlignment: 0.0,
+      width: isPortrait ? 600 : 500,
+      debounceDelay: const Duration(milliseconds: 500),
+      onQueryChanged: (query) {
+        // Call your model, bloc, controller here.
+      },
+      // Specify a custom transition to be used for
+      // animating between opened and closed stated.
+      transition: CircularFloatingSearchBarTransition(),
+      actions: [
+        FloatingSearchBarAction(
+          showIfOpened: false,
+          child: CircularButton(
+            icon: const Icon(Icons.place),
+            onPressed: () {},
+          ),
+        ),
+        FloatingSearchBarAction.searchToClear(
+          showIfClosed: false,
+        ),
+      ],
+      builder: (context, transition) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Material(
+            color: Colors.white,
+            elevation: 4.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: Colors.accents.map((color) {
+                return Container(height: 112, color: color);
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+
+class locationLocation extends StatefulWidget {
+  const locationLocation({super.key});
+
+  @override
+  State<locationLocation> createState() => _locationLocationState();
+}
+
+class _locationLocationState extends State<locationLocation> {
+  late GoogleMapController _controller;
+  Location currentLocation = Location();
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  bool _is3dMode = false;
+  late var Latitude;
+  late var Longitude;
+  BitmapDescriptor? _markerIcon;
+
+  void getLocation() async {
+    var location = await currentLocation.getLocation();
+
+    currentLocation.onLocationChanged.listen((LocationData loc) {
+      Latitude = loc.latitude;
+      Longitude = loc.longitude;
+      setState(() {
+        _addLocationIcon(loc);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      getLocation();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _createMarkerImageFromAsset(context);
+    return Scaffold(
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(16.0324816, 108.132794),
+          zoom: 13.0,
+        ),
+        markers: Set<Marker>.of(markers.values),
+        onMapCreated: _onMapCreated,
+        // onPOITap: _onPOITap,
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () => _switch3dMode(),
+            tooltip: '3D Mode',
+            child: const Icon(Icons.threed_rotation),
+          ),
+          const SizedBox(
+            height: 550,
+          ),
+          FloatingActionButton(
+            child: const Icon(Icons.my_location),
+            onPressed: () {
+              getLocation();
+              _controller
+                  .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                target: LatLng(Latitude, Longitude),
+                zoom: 17.0,
+              )));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addLocationIcon(LocationData loc) {
+    final String markerIdVal = 'my_location';
+    final MarkerId markerId = MarkerId(markerIdVal);
+
+    //khởi tạo marker
+    final Marker marker = Marker(
+      consumeTapEvents: true,
+      markerId: markerId,
+      position: LatLng(loc.latitude ?? 0.0, loc.longitude ?? 0.0),
+      // icon: _markerIcon!,
+    );
+    setState(() {
+      markers = <MarkerId, Marker>{};
+      markers[markerId] = marker;
+    });
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    this._controller = controller;
+  }
+
+  // void _onPOITap(String placeId, String name, LatLng location) {
+  //   print('Tap on place: $placeId, name: $name, location: $location');
+  // }
+
+  void _switch3dMode() async {
+    _is3dMode = !_is3dMode;
+    // _controller.enable3DMode(_is3dMode);
+  }
+
+  Future<void> _createMarkerImageFromAsset(BuildContext context) async {
+    if (_markerIcon == null) {
+      final ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: Size.square(32));
+      _markerIcon = await BitmapDescriptor.fromAssetImage(
+          imageConfiguration, 'assets/ic_my_location1.png');
+    }
+  }
+}
