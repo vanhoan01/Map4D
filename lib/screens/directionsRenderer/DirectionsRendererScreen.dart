@@ -390,16 +390,16 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
                             3)
                       ],
                     ),
-                    Visibility(
-                      visible: _distance == null ? false : true,
-                      child: Text(
-                        '${_duration ?? 0} phút (${_distance ?? 0} km)',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    // Visibility(
+                    //   visible: _distance == null ? false : true,
+                    //   child: Text(
+                    //     '${_duration ?? 0} phút (${_distance ?? 0} km)',
+                    //     style: const TextStyle(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -460,12 +460,21 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    '${_duration ?? 0} phút (${_distance ?? 0} km)',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${_duration ?? 0} phút ',
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Color.fromRGBO(56, 142, 60, 1)),
+                      ),
+                      Text(
+                        ' (${_distance ?? 0} km)',
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Color.fromRGBO(117, 117, 117, 1)),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 15),
                   Container(
@@ -495,19 +504,20 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
                           startAddressController.text,
                           0,
                         ),
-                        for (var step in _steps!)
+                        // for (var step in _steps!)
+                        for (int i = 0; i < _steps!.length - 1; i++)
                           stepDirection(
-                            myIconCollection[step.maneuver] == null
+                            myIconCollection[_steps![i].maneuver] == null
                                 ? Icon(
                                     myIconCollection['straight'],
                                     size: 28,
                                   )
                                 : Icon(
-                                    myIconCollection[step.maneuver],
+                                    myIconCollection[_steps![i].maneuver],
                                     size: 28,
                                   ),
-                            step.htmlInstructions,
-                            step.distance.round(),
+                            _steps![i].htmlInstructions,
+                            _steps![i].distance.round(),
                           ),
                         stepDirection(
                           const Icon(
@@ -554,9 +564,12 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: icon),
-            Text(
-              instructions,
-              style: const TextStyle(fontSize: 16),
+            Expanded(
+              child: Text(
+                instructions,
+                style: const TextStyle(fontSize: 16),
+                maxLines: 2,
+              ),
             ),
           ],
         ),
