@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:map4dmap/myLocation/locationGeolocator.dart';
-import 'package:map4dmap/myLocation/locationLocation.dart';
-import 'package:map4dmap/myLocation/locationMap4d.dart';
-import 'package:map4dmap/myLocation/notificationPage.dart';
-import 'package:map4dmap/screens/MenuOverlayScreen.dart';
-import 'package:map4dmap/screens/SearchDelegateScreen.dart';
+import 'package:map4dmap/view/pages/locationGeolocator.dart';
+import 'package:map4dmap/view/pages/locationLocation.dart';
+import 'package:map4dmap/view/pages/locationMap4d.dart';
+import 'package:map4dmap/view/pages/notificationPage.dart';
+import 'package:map4dmap/view/screens/MenuOverlayScreen.dart';
+import 'package:map4dmap/view/screens/SearchDelegateScreen.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -86,7 +86,7 @@ class MapsDemoState extends State<MapsDemo>
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) => MenuOverlayScreen(),
+                  builder: (_) => const MenuOverlayScreen(),
                 );
               },
               child: const CircleAvatar(

@@ -1,0 +1,44 @@
+{
+  "result": {
+    "description": null,
+    "tags": [],
+    "metadata": [],
+    "photos": [],
+    "addressComponents": [
+      {
+        "types": ["housenumber"],
+        "name": "223"
+      },
+      {
+        "types": ["street"],
+        "name": "Trần Hưng Đạo"
+      },
+      {
+        "types": ["admin_level_4"],
+        "name": "Phường An Hải Bắc"
+      },
+      {
+        "types": ["admin_level_3"],
+        "name": "Quận Sơn Trà"
+      },
+      {
+        "types": ["admin_level_2"],
+        "name": "Thành phố Đà Nẵng"
+      },
+      {
+        "types": ["admin_level_1"],
+        "name": "Việt Nam"
+      }
+    ],
+    "objectId": null,
+    "id": "60a73ddfb4e1e72f18938426",
+    "name": "Quán Viên Cà Phê - Giải Khát",
+    "address": "223 Đ. Trần Hưng Đạo, An Hải Bắc, Sơn Trà, Đà Nẵng 550000, Việt Nam",
+    "location": {
+      "lng": 108.2290276,
+      "lat": 16.07724
+    },
+    "types": ["cafe", "food_service", "point", "other"]
+  },
+  "code": "ok"
+}
