@@ -10,7 +10,7 @@ import 'package:map4d_map/map4d_map.dart';
 import 'package:map4dmap/model/model/PlaceDetail.dart';
 import 'package:map4dmap/model/model/StepModel.dart';
 import 'package:map4dmap/resources/secrets.dart';
-import '../../../packages/directionsRenderer/flutter_polyline_points.dart';
+import '../../packages/directionsRenderer/flutter_polyline_points.dart';
 
 // ignore: camel_case_types
 class DirectionsRendererScreen extends StatefulWidget {
@@ -596,7 +596,7 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
               distance == 0 ? '' : '$distance m',
               style: TextStyle(color: Colors.grey.shade700),
             ),
-            const SizedBox(width: 5),
+            distance != 0 ? const SizedBox(width: 5) : Container(),
             Expanded(
               child: Container(
                 height: 1,
