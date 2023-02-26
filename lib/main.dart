@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:map4dmap/view/pages/locationGeolocator.dart';
 import 'package:map4dmap/view/screens/Home.dart';
 
 void main() {
@@ -36,7 +35,7 @@ class MapsDemoState extends State<MapsDemo> {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/': (context) => page,
         // When navigating to the "/second" route, build the SecondScreen widget.
-        locationGeolocator.routeName: (context) => locationGeolocator(),
+        // locationGeolocator.routeName: (context) => const locationGeolocator(),
       },
     );
   }

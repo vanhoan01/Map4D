@@ -171,7 +171,9 @@ class _locationGeolocatorState extends State<locationGeolocator> {
               ? showType == true
                   ? BottomPlaceListDetail(placeDetailList: _placeSearchTerms!)
                   : BottomPlaceListHorizontal(
-                      placeDetailList: _placeSearchTerms!)
+                      placeDetailList: _placeSearchTerms!,
+                      idSrcoll: _placeSearchTerms![1].id,
+                    )
               : _placeDetail != null
                   ? BottomPlaceDetail(placeDetail: _placeDetail)
                   : Container(),
@@ -214,6 +216,8 @@ class _locationGeolocatorState extends State<locationGeolocator> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+                        settings:
+                            const RouteSettings(name: "/DirectionsRenderer"),
                         builder: (context) => const DirectionsRendererScreen(),
                       ),
                     );

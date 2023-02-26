@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:map4d_map/map4d_map.dart';
 import 'package:map4dmap/model/model/PlaceDetail.dart';
 
-class SuggestionItem extends StatelessWidget {
-  const SuggestionItem(
+class SuggestionChooseItem extends StatelessWidget {
+  const SuggestionChooseItem(
       {super.key, required this.placeDetail, required this.location});
   final PlaceDetail placeDetail;
   final MFLatLng location;

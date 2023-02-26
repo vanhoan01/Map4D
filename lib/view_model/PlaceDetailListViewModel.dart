@@ -14,12 +14,15 @@ class PlaceDetailListViewModel {
     try {
       var responsePD = await networkApiService.getApi(
           '${AppUrl.autosuggestUrl}?key=${Secrets.MAP4D_API_KEY}&text=$text&location=$location');
+      // ignore: avoid_print
       print('responsePD[result]: ${responsePD['result']}');
       PlaceDetailList placeDetailList =
           PlaceDetailList.fromJson({'data': responsePD['result']});
+      // ignore: avoid_print
       print('placeDetailList: ${placeDetailList.data![0].name}');
       data = placeDetailList.data!;
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
     return data;
@@ -30,12 +33,15 @@ class PlaceDetailListViewModel {
     try {
       var responsePD = await networkApiService.getApi(
           '${AppUrl.textSearchUrl}?key=${Secrets.MAP4D_API_KEY}&text=$text&location=$location');
+      // ignore: avoid_print
       print('responsePD[result]: ${responsePD['result']}');
       PlaceDetailList placeDetailList =
           PlaceDetailList.fromJson({'data': responsePD['result']});
+      // ignore: avoid_print
       print('placeDetailList: ${placeDetailList.data![0].name}');
       data = placeDetailList.data!;
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
     return data;

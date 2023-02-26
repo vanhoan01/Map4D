@@ -1,49 +1,7 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
 
-/// Shows a full screen search page and returns the search result selected by
-/// the user when the page is closed.
-///
-/// The search page consists of an app bar with a search field and a body which
-/// can either show suggested search queries or the search results.
-///
-/// The appearance of the search page is determined by the provided
-/// `delegate`. The initial query string is given by `query`, which defaults
-/// to the empty string. When `query` is set to null, `delegate.query` will
-/// be used as the initial query.
-///
-/// This method returns the selected search result, which can be set in the
-/// [SearchDelegateWidget.close] call. If the search page is closed with the system
-/// back button, it returns null.
-///
-/// A given [SearchDelegateWidget] can only be associated with one active [showSearchWidget]
-/// call. Call [SearchDelegateWidget.close] before re-using the same delegate instance
-/// for another [showSearchWidget] call.
-///
-/// The `useRootNavigator` argument is used to determine whether to push the
-/// search page to the [Navigator] furthest from or nearest to the given
-/// `context`. By default, `useRootNavigator` is `false` and the search page
-/// route created by this method is pushed to the nearest navigator to the
-/// given `context`. It can not be `null`.
-///
-/// The transition to the search page triggered by this method looks best if the
-/// screen triggering the transition contains an [AppBar] at the top and the
-/// transition is called from an [IconButton] that's part of [AppBar.actions].
-/// The animation provided by [SearchDelegateWidget.transitionAnimation] can be used
-/// to trigger additional animations in the underlying page while the search
-/// page fades in or out. This is commonly used to animate an [AnimatedIcon] in
-/// the [AppBar.leading] position e.g. from the hamburger menu to the back arrow
-/// used to exit the search page.
-///
-/// ## Handling emojis and other complex characters
-/// {@macro flutter.widgets.EditableText.onChanged}
-///
-/// See also:
-///
-///  * [SearchDelegateWidget] to define the content of the search page.
 Future<T?> showSearchWidget<T>({
   required BuildContext context,
   required SearchDelegateWidget<T> delegate,
@@ -61,73 +19,7 @@ Future<T?> showSearchWidget<T>({
   ));
 }
 
-/// Delegate for [showSearchWidget] to define the content of the search page.
-///
-/// The search page always shows an [AppBar] at the top where users can
-/// enter their search queries. The buttons shown before and after the search
-/// query text field can be customized via [SearchDelegateWidget.buildLeading]
-/// and [SearchDelegateWidget.buildActions]. Additionally, a widget can be placed
-/// across the bottom of the [AppBar] via [SearchDelegateWidget.buildBottom].
-///
-/// The body below the [AppBar] can either show suggested queries (returned by
-/// [SearchDelegateWidget.buildSuggestions]) or - once the user submits a search  - the
-/// results of the search as returned by [SearchDelegateWidget.buildResults].
-///
-/// [SearchDelegateWidget.query] always contains the current query entered by the user
-/// and should be used to build the suggestions and results.
-///
-/// The results can be brought on screen by calling [SearchDelegateWidget.showResults]
-/// and you can go back to showing the suggestions by calling
-/// [SearchDelegateWidget.showSuggestions].
-///
-/// Once the user has selected a search result, [SearchDelegateWidget.close] should be
-/// called to remove the search page from the top of the navigation stack and
-/// to notify the caller of [showSearchWidget] about the selected search result.
-///
-/// A given [SearchDelegateWidget] can only be associated with one active [showSearchWidget]
-/// call. Call [SearchDelegateWidget.close] before re-using the same delegate instance
-/// for another [showSearchWidget] call.
-///
-/// ## Handling emojis and other complex characters
-/// {@macro flutter.widgets.EditableText.onChanged}
 abstract class SearchDelegateWidget<T> {
-  /// Constructor to be called by subclasses which may specify
-  /// [searchFieldLabel], either [searchFieldStyle] or [searchFieldDecorationTheme],
-  /// [keyboardType] and/or [textInputAction]. Only one of [searchFieldLabel]
-  /// and [searchFieldDecorationTheme] may be non-null.
-  ///
-  /// {@tool snippet}
-  /// ```dart
-  /// class CustomSearchHintDelegate extends SearchDelegateWidget<String> {
-  ///   CustomSearchHintDelegate({
-  ///     required String hintText,
-  ///   }) : super(
-  ///     searchFieldLabel: hintText,
-  ///     keyboardType: TextInputType.text,
-  ///     textInputAction: TextInputAction.search,
-  ///   );
-  ///
-  ///   @override
-  ///   Widget buildLeading(BuildContext context) => const Text('leading');
-  ///
-  ///   @override
-  ///   PreferredSizeWidget buildBottom(BuildContext context) {
-  ///     return const PreferredSize(
-  ///        preferredSize: Size.fromHeight(56.0),
-  ///        child: Text('bottom'));
-  ///   }
-  ///
-  ///   @override
-  ///   Widget buildSuggestions(BuildContext context) => const Text('suggestions');
-  ///
-  ///   @override
-  ///   Widget buildResults(BuildContext context) => const Text('results');
-  ///
-  ///   @override
-  ///   List<Widget> buildActions(BuildContext context) => <Widget>[];
-  /// }
-  /// ```
-  /// {@end-tool}
   SearchDelegateWidget({
     this.searchFieldLabel,
     this.searchFieldStyle,
@@ -136,88 +28,16 @@ abstract class SearchDelegateWidget<T> {
     this.textInputAction = TextInputAction.search,
   }) : assert(searchFieldStyle == null || searchFieldDecorationTheme == null);
 
-  /// Suggestions shown in the body of the search page while the user types a
-  /// query into the search field.
-  ///
-  /// The delegate method is called whenever the content of [query] changes.
-  /// The suggestions should be based on the current [query] string. If the query
-  /// string is empty, it is good practice to show suggested queries based on
-  /// past queries or the current context.
-  ///
-  /// Usually, this method will return a [ListView] with one [ListTile] per
-  /// suggestion. When [ListTile.onTap] is called, [query] should be updated
-  /// with the corresponding suggestion and the results page should be shown
-  /// by calling [showResults].
   Widget buildSuggestions(BuildContext context);
 
-  /// The results shown after the user submits a search from the search page.
-  ///
-  /// The current value of [query] can be used to determine what the user
-  /// searched for.
-  ///
-  /// This method might be applied more than once to the same query.
-  /// If your [buildResults] method is computationally expensive, you may want
-  /// to cache the search results for one or more queries.
-  ///
-  /// Typically, this method returns a [ListView] with the search results.
-  /// When the user taps on a particular search result, [close] should be called
-  /// with the selected result as argument. This will close the search page and
-  /// communicate the result back to the initial caller of [showSearchWidget].
   Widget buildResults(BuildContext context);
 
-  /// A widget to display before the current query in the [AppBar].
-  ///
-  /// Typically an [IconButton] configured with a [BackButtonIcon] that exits
-  /// the search with [close]. One can also use an [AnimatedIcon] driven by
-  /// [transitionAnimation], which animates from e.g. a hamburger menu to the
-  /// back button as the search overlay fades in.
-  ///
-  /// Returns null if no widget should be shown.
-  ///
-  /// See also:
-  ///
-  ///  * [AppBar.leading], the intended use for the return value of this method.
   Widget? buildLeading(BuildContext context);
 
-  /// Widgets to display after the search query in the [AppBar].
-  ///
-  /// If the [query] is not empty, this should typically contain a button to
-  /// clear the query and show the suggestions again (via [showSuggestions]) if
-  /// the results are currently shown.
-  ///
-  /// Returns null if no widget should be shown.
-  ///
-  /// See also:
-  ///
-  ///  * [AppBar.actions], the intended use for the return value of this method.
   List<Widget>? buildActions(BuildContext context);
 
-  /// Widget to display across the bottom of the [AppBar].
-  ///
-  /// Returns null by default, i.e. a bottom widget is not included.
-  ///
-  /// See also:
-  ///
-  ///  * [AppBar.bottom], the intended use for the return value of this method.
-  ///
   PreferredSizeWidget? buildBottom(BuildContext context) => null;
 
-  /// The theme used to configure the search page.
-  ///
-  /// The returned [ThemeData] will be used to wrap the entire search page,
-  /// so it can be used to configure any of its components with the appropriate
-  /// theme properties.
-  ///
-  /// Unless overridden, the default theme will configure the AppBar containing
-  /// the search input text field with a white background and black text on light
-  /// themes. For dark themes the default is a dark grey background with light
-  /// color text.
-  ///
-  /// See also:
-  ///
-  ///  * [AppBarTheme], which configures the AppBar's appearance.
-  ///  * [InputDecorationTheme], which configures the appearance of the search
-  ///    text field.
   ThemeData appBarTheme(BuildContext context) {
     assert(context != null);
     final ThemeData theme = Theme.of(context);
@@ -240,17 +60,8 @@ abstract class SearchDelegateWidget<T> {
     );
   }
 
-  /// The current query string shown in the [AppBar].
-  ///
-  /// The user manipulates this string via the keyboard.
-  ///
-  /// If the user taps on a suggestion provided by [buildSuggestions] this
-  /// string should be updated to that suggestion via the setter.
   String get query => _queryTextController.text;
 
-  /// Changes the current query string.
-  ///
-  /// Setting the query string programmatically moves the cursor to the end of the text field.
   set query(String value) {
     assert(query != null);
     _queryTextController.text = value;
@@ -260,34 +71,11 @@ abstract class SearchDelegateWidget<T> {
     }
   }
 
-  /// Transition from the suggestions returned by [buildSuggestions] to the
-  /// [query] results returned by [buildResults].
-  ///
-  /// If the user taps on a suggestion provided by [buildSuggestions] the
-  /// screen should typically transition to the page showing the search
-  /// results for the suggested query. This transition can be triggered
-  /// by calling this method.
-  ///
-  /// See also:
-  ///
-  ///  * [showSuggestions] to show the search suggestions again.
   void showResults(BuildContext context) {
     _focusNode?.unfocus();
     _currentBody = _SearchBody.results;
   }
 
-  /// Transition from showing the results returned by [buildResults] to showing
-  /// the suggestions returned by [buildSuggestions].
-  ///
-  /// Calling this method will also put the input focus back into the search
-  /// field of the [AppBar].
-  ///
-  /// If the results are currently shown this method can be used to go back
-  /// to showing the search suggestions.
-  ///
-  /// See also:
-  ///
-  ///  * [showResults] to show the search results.
   void showSuggestions(BuildContext context) {
     assert(_focusNode != null,
         '_focusNode must be set by route before showSuggestions is called.');
@@ -295,10 +83,6 @@ abstract class SearchDelegateWidget<T> {
     _currentBody = _SearchBody.suggestions;
   }
 
-  /// Closes the search page and returns to the underlying route.
-  ///
-  /// The value provided for `result` is used as the return value of the call
-  /// to [showSearchWidget] that launched the search initially.
   void close(BuildContext context, T result) {
     _currentBody = null;
     _focusNode?.unfocus();
@@ -601,17 +385,19 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
               padding:
                   const EdgeInsets.only(top: 39, right: 8, left: 8, bottom: 8),
               child: Container(
+                height: 50,
                 decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromRGBO(224, 224, 224, 1),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                    color: Colors.white),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(224, 224, 224, 1),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

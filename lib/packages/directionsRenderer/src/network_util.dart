@@ -69,8 +69,9 @@ class NetworkUtil {
           result.duration =
               parsedJson['result']['routes'][0]['legs'][0]['duration']['value'];
           // print(
-          //     "stepList: ${parsedJson['result']['routes'][0]['legs'][0]['steps'].runtimeType}");
+          //     "stepList: ${parsedJson['result']['routes'][0]['legs'][0]['steps']}");
           StepList stepList = StepList();
+          //StepModelFromJson json['distance']['value'] as num
           stepList = StepList.fromJson(
               parsedJson['result']['routes'][0]['legs'][0]['steps']);
           // ignore: avoid_print

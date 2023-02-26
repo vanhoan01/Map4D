@@ -2,14 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:map4d_map/map4d_map.dart';
 import 'package:map4dmap/model/model/PlaceDetail.dart';
+import 'package:map4dmap/view/directions/compoments/SuggestionChooseItem.dart';
 import 'package:map4dmap/view/search/components/Search.dart';
-import 'package:map4dmap/view/search/components/SuggestionItem.dart';
 import 'package:map4dmap/view_model/PlaceDetailListViewModel.dart';
 
-class SearchDelegateScreen extends SearchDelegateWidget {
+class SearchChooseScreen extends SearchDelegateWidget {
   MFLatLng location;
-  SearchDelegateScreen(
-      {required this.location, super.searchFieldLabel, super.searchFieldStyle});
+  String addressType;
+  SearchChooseScreen(
+      {required this.location,
+      required this.addressType,
+      super.searchFieldLabel,
+      super.searchFieldStyle});
   PlaceDetailListViewModel placeDetailListViewModel =
       PlaceDetailListViewModel();
 
@@ -58,15 +62,57 @@ class SearchDelegateScreen extends SearchDelegateWidget {
     );
   }
 
+  @override
+  PreferredSizeWidget? buildBottom(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(35),
+      child: InkWell(
+        onTap: () {
+          close(context, 'choosePossition');
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [
+              SizedBox(
+                width: 70,
+                child: Icon(
+                  Icons.location_on_outlined,
+                  size: 24,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Chọn trên bản đồ',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // third overwrite to show query result
   @override
   Widget buildResults(BuildContext context) {
     if (query.trim() != "") {
-      getPlaceResultsList(
+      getPlaceSuggestList(
           query.trim(), '${location.latitude},${location.longitude}');
     }
-    Navigator.pop(context, query.trim());
-    return Container();
+    return ListView.builder(
+      itemCount: placeSuggestionList.length,
+      itemBuilder: (context, index) {
+        var result = placeSuggestionList[index];
+        return SuggestionChooseItem(
+          placeDetail: result,
+          location: location,
+        );
+      },
+    );
   }
 
   // last overwrite to show the
@@ -81,11 +127,25 @@ class SearchDelegateScreen extends SearchDelegateWidget {
       itemCount: placeSuggestionList.length,
       itemBuilder: (context, index) {
         var result = placeSuggestionList[index];
-        return SuggestionItem(
+        return SuggestionChooseItem(
           placeDetail: result,
           location: location,
         );
       },
     );
   }
+
+  // void _navigateAndChoose(BuildContext context, String addressType) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) =>
+  //           ChooseLocationScreen(choose: 'start', context: context),
+  //     ),
+  //   ).then((results) {
+  //     if (results != null) {
+  //       Navigator.of(results[0]).pop(["MFLatLng", results[1]]);
+  //     }
+  //   });
+  // }
 }

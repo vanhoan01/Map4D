@@ -9,7 +9,7 @@ part of 'StepModel.dart';
 StepModel _$StepModelFromJson(Map<String, dynamic> json) => StepModel(
       maneuver: json['maneuver'] as String,
       htmlInstructions: json['htmlInstructions'] as String,
-      distance: (json['distance'] as num).toDouble(),
+      distance: (json['distance']['value'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$StepModelToJson(StepModel instance) => <String, dynamic>{

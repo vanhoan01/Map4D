@@ -10,6 +10,8 @@ import 'package:map4d_map/map4d_map.dart';
 import 'package:map4dmap/model/model/PlaceDetail.dart';
 import 'package:map4dmap/model/model/StepModel.dart';
 import 'package:map4dmap/resources/secrets.dart';
+import 'package:map4dmap/view/directions/SearchChooseScreen.dart';
+import 'package:map4dmap/view/search/components/Search.dart';
 import '../../packages/directionsRenderer/flutter_polyline_points.dart';
 
 // ignore: camel_case_types
@@ -28,20 +30,20 @@ class DirectionsRendererScreen extends StatefulWidget {
 // ignore: camel_case_types
 class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
   late MFMapViewController controller;
-
-  MFLatLng _kLatLng = const MFLatLng(16.0324816, 108.132794);
+  MFLatLng _kLatLng = const MFLatLng(16.036505, 108.218186);
   MFBitmap? _iconStart;
   TravelMode _travelMode = TravelMode.motorcycle;
   Set<MFMarker> markers = {};
-  late LocationSettings locationSettings;
 
+  //    switch stack
+  String stack = "directionsRenderer";
+
+  //    directions
   late Position _currentPosition;
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
-
   final startAddressFocusNode = FocusNode();
   final desrinationAddressFocusNode = FocusNode();
-
   String _currentAddress = '';
   String _startAddress = '';
   String _destinationAddress = '';
@@ -50,13 +52,35 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
   int? _duration;
   String _choose = 'start';
   List<StepModel>? _steps;
-
-  int modevalue = 0;
-  // car, bike, foot, motorcycle
-
+  int modevalue = 0; // car, bike, foot, motorcycle
   late PolylinePoints polylinePoints;
   Map<MFPolylineId, MFPolyline> polylines = {};
   List<MFLatLng> polylineCoordinates = [];
+
+  //    choosePossition
+  MFLatLng choosePossition = const MFLatLng(16.036505, 108.218186);
+
+  List<String> animalNames = ['Elephant', 'Tiger', 'Kangaroo'];
+  final Map<String, IconData> myIconCollection = {
+    'turn-slight-left': Icons.turn_slight_left,
+    'turn-sharp-left': Icons.turn_sharp_left,
+    'uturn-left': Icons.u_turn_left,
+    'turn-left': Icons.turn_left,
+    'turn-slight-right': Icons.turn_slight_right,
+    'turn-sharp-right': Icons.turn_sharp_right,
+    'uturn-right': Icons.u_turn_right,
+    'turn-right': Icons.turn_right,
+    'straight': Icons.straight,
+    'ramp-left': Icons.ramp_left,
+    'ramp-right': Icons.ramp_right,
+    'merge': Icons.merge,
+    'fork-left': Icons.fork_left,
+    'fork-right': Icons.fork_right,
+    'ferry': Icons.directions_ferry,
+    'ferry-train': Icons.directions_train,
+    'roundabout-left': Icons.roundabout_left,
+    'roundabout-right': Icons.roundabout_right,
+  };
 
   @override
   void initState() {
@@ -64,6 +88,339 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
     getUserLocation();
     _getCurrentLocation();
     setLocation();
+    // WidgetsBinding.instance.addPostFrameCallback((_) => yourFunction(context));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _createMarkerImageFromAsset(context);
+    var width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          MFMapView(
+            initialCameraPosition: MFCameraPosition(
+              target: _kLatLng,
+              zoom: 13.0,
+            ),
+            markers: Set<MFMarker>.of(markers),
+            //markers: Set<MFMarker>.of(markers.values),
+            polylines: Set<MFPolyline>.of(polylines.values),
+            onMapCreated: _onMapCreated,
+            onPOITap: _onPOITap,
+            onTap: _onTap,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            onCameraMove: (position) {
+              setState(() {
+                choosePossition = MFLatLng(
+                    position.target.latitude, position.target.longitude);
+              });
+            },
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: stack != "directionsRenderer"
+                  ? Container(
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              _navigateSearchAndChoose(context, _choose);
+                            },
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.black),
+                          ),
+                          Expanded(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              _choose == 'start'
+                                  ? 'Chọn vị trí bắt đầu'
+                                  : 'Chọn điểm đến',
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              print("choosePossition: $choosePossition");
+                              setState(() {
+                                stack = 'directionsRenderer';
+                              });
+                              String possitionText =
+                                  '${choosePossition.latitude},${choosePossition.longitude}';
+                              setState(() {
+                                if (_choose == 'start') {
+                                  startAddressController.text = possitionText;
+                                  _startAddress = possitionText;
+                                } else {
+                                  destinationAddressController.text =
+                                      possitionText;
+                                  _destinationAddress = possitionText;
+                                }
+                              });
+                              clearOne(_choose);
+                              addMarkers(
+                                  choosePossition != null
+                                      ? choosePossition.latitude
+                                      : 16.036505,
+                                  choosePossition != null
+                                      ? choosePossition.longitude
+                                      : 108.218186,
+                                  _choose);
+                            },
+                            child: const Text(
+                              'OK',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      color: Colors.white,
+                      width: width,
+                      padding: const EdgeInsets.only(top: 15, bottom: 5),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const SizedBox(
+                                  width: 45,
+                                  height: 45,
+                                  child: Icon(Icons.arrow_back),
+                                ),
+                              ),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _textField(
+                                    controller: startAddressController,
+                                    focusNode: startAddressFocusNode,
+                                    label: 'Điểm bắt đầu',
+                                    hint: 'Chọn điểm bắt đầu',
+                                    width: width,
+                                    prefixIcon: InkWell(
+                                      child: Icon(
+                                        _choose == 'start'
+                                            ? Icons.circle
+                                            : Icons.circle_outlined,
+                                        color: Colors.blueAccent,
+                                        size: 20,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          if (_choose == 'start') {
+                                            _choose = 'end';
+                                          } else {
+                                            _choose = 'start';
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.my_location),
+                                      onPressed: () {
+                                        _getCurrentLocation();
+                                        startAddressController.text =
+                                            'Vị trí của tôi';
+                                        _startAddress = _currentAddress;
+                                        clearOne('start');
+                                        addMarkers(
+                                            _currentPosition.latitude,
+                                            _currentPosition.longitude,
+                                            'start');
+                                      },
+                                    ),
+                                    locationCallback: (String value) {
+                                      setState(() {
+                                        _startAddress = value;
+                                      });
+                                    },
+                                    addressType: 'start',
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _textField(
+                                    label: 'Điểm đến',
+                                    hint: 'Chọn điểm đến',
+                                    prefixIcon: InkWell(
+                                      child: Icon(
+                                        _choose == 'end'
+                                            ? Icons.location_on
+                                            : Icons.location_on_outlined,
+                                        color: Colors.redAccent,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          if (_choose == 'start') {
+                                            _choose = 'end';
+                                          } else {
+                                            _choose = 'start';
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(
+                                        Icons.directions,
+                                        color: Colors.redAccent,
+                                      ),
+                                      onPressed: (_startAddress != '' &&
+                                              _destinationAddress != '')
+                                          ? () async {
+                                              startAddressFocusNode.unfocus();
+                                              desrinationAddressFocusNode
+                                                  .unfocus();
+                                              setState(() {
+                                                if (markers.isNotEmpty) {
+                                                  markers.clear();
+                                                }
+                                                if (polylines.isNotEmpty) {
+                                                  polylines.clear();
+                                                }
+                                                if (polylineCoordinates
+                                                    .isNotEmpty) {
+                                                  polylineCoordinates.clear();
+                                                }
+                                                _placeDistance = null;
+                                                _distance = null;
+                                                _duration = null;
+                                                _steps = null;
+                                              });
+
+                                              _calculateDistance()
+                                                  .then((isCalculated) {
+                                                if (!isCalculated) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Error chỉ đường'),
+                                                    ),
+                                                  );
+                                                }
+                                              });
+                                            }
+                                          : null,
+                                    ),
+                                    controller: destinationAddressController,
+                                    focusNode: desrinationAddressFocusNode,
+                                    width: width,
+                                    locationCallback: (String value) {
+                                      setState(() {
+                                        _destinationAddress = value;
+                                      });
+                                    },
+                                    addressType: 'desrination',
+                                  ),
+                                  const SizedBox(height: 5),
+                                ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  String nameStart =
+                                      startAddressController.text;
+                                  String addressStart = _startAddress;
+                                  setState(() {
+                                    startAddressController.text =
+                                        destinationAddressController.text;
+                                    _startAddress = _destinationAddress;
+                                    destinationAddressController.text =
+                                        nameStart;
+                                    _destinationAddress = addressStart;
+                                  });
+                                  if (polylines.isNotEmpty) {
+                                    directionsRenderrer();
+                                  }
+                                },
+                                child: const Align(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                      height: 107,
+                                      width: 45,
+                                      // color: Colors.red,
+                                      child: Icon(
+                                        Icons.swap_vert,
+                                        size: 28,
+                                      )),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              CustomRadioButton(
+                                  Icon(Icons.directions_car_outlined,
+                                      size: 20,
+                                      color: (modevalue == 0)
+                                          ? Colors.blueAccent
+                                          : Colors.black),
+                                  "Xe hơi",
+                                  0),
+                              CustomRadioButton(
+                                  Icon(Icons.motorcycle_outlined,
+                                      size: 20,
+                                      color: (modevalue == 1)
+                                          ? Colors.blueAccent
+                                          : Colors.black),
+                                  "Xe máy",
+                                  1),
+                              CustomRadioButton(
+                                  Icon(Icons.directions_bike_outlined,
+                                      size: 20,
+                                      color: (modevalue == 2)
+                                          ? Colors.blueAccent
+                                          : Colors.black),
+                                  "Xe đạp",
+                                  2),
+                              CustomRadioButton(
+                                  Icon(Icons.directions_walk,
+                                      size: 20,
+                                      color: (modevalue == 3)
+                                          ? Colors.blueAccent
+                                          : Colors.black),
+                                  "Đi bộ",
+                                  3)
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+          stack == "directionsRenderer"
+              ? _steps == null
+                  ? Container()
+                  : bottomDetailsSheet()
+              : Container(),
+          stack != "directionsRenderer"
+              ? const Align(
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.location_pin,
+                    size: 45,
+                    color: Colors.red,
+                  ),
+                )
+              : Container(),
+        ],
+      ),
+    );
   }
 
   void setLocation() {
@@ -84,13 +441,16 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
     required Widget prefixIcon,
     Widget? suffixIcon,
     required Function(String) locationCallback,
+    required String addressType,
   }) {
     return SizedBox(
       width: width * 0.75,
       child: TextField(
+        // enabled: false,
         onChanged: (value) {
           locationCallback(value);
         },
+        readOnly: true,
         controller: controller,
         focusNode: focusNode,
         decoration: InputDecoration(
@@ -121,7 +481,9 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
           hintText: hint,
           // hintStyle: TextStyle(color: Colors.black26),
         ),
-        onTap: null,
+        onTap: () {
+          _navigateSearchAndChoose(context, addressType);
+        },
       ),
     );
   }
@@ -152,278 +514,65 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
     );
   }
 
-  List<String> animalNames = ['Elephant', 'Tiger', 'Kangaroo'];
-  final Map<String, IconData> myIconCollection = {
-    'turn-slight-left': Icons.turn_slight_left,
-    'turn-sharp-left': Icons.turn_sharp_left,
-    'uturn-left': Icons.u_turn_left,
-    'turn-left': Icons.turn_left,
-    'turn-slight-right': Icons.turn_slight_right,
-    'turn-sharp-right': Icons.turn_sharp_right,
-    'uturn-right': Icons.u_turn_right,
-    'turn-right': Icons.turn_right,
-    'straight': Icons.straight,
-    'ramp-left': Icons.ramp_left,
-    'ramp-right': Icons.ramp_right,
-    'merge': Icons.merge,
-    'fork-left': Icons.fork_left,
-    'fork-right': Icons.fork_right,
-    'ferry': Icons.directions_ferry,
-    'ferry-train': Icons.directions_train,
-    'roundabout-left': Icons.roundabout_left,
-    'roundabout-right': Icons.roundabout_right,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    _createMarkerImageFromAsset(context);
-    var width = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          MFMapView(
-            initialCameraPosition: MFCameraPosition(
-              target: _kLatLng,
-              zoom: 13.0,
-            ),
-            markers: Set<MFMarker>.of(markers),
-            //markers: Set<MFMarker>.of(markers.values),
-            polylines: Set<MFPolyline>.of(polylines.values),
-            onMapCreated: _onMapCreated,
-            onPOITap: _onPOITap,
-            onTap: _onTap,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-          ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                color: Colors.white,
-                width: width,
-                padding: const EdgeInsets.only(top: 15, bottom: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const SizedBox(
-                            width: 45,
-                            height: 45,
-                            child: Icon(Icons.arrow_back),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _textField(
-                                controller: startAddressController,
-                                focusNode: startAddressFocusNode,
-                                label: 'Điểm bắt đầu',
-                                hint: 'Chọn điểm bắt đầu',
-                                width: width,
-                                prefixIcon: InkWell(
-                                  child: Icon(
-                                    _choose == 'start'
-                                        ? Icons.circle
-                                        : Icons.circle_outlined,
-                                    color: Colors.blueAccent,
-                                    size: 20,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      if (_choose == 'start') {
-                                        _choose = 'end';
-                                      } else {
-                                        _choose = 'start';
-                                      }
-                                    });
-                                  },
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.my_location),
-                                  onPressed: () {
-                                    _getCurrentLocation();
-                                    startAddressController.text =
-                                        'Vị trí của tôi';
-                                    _startAddress = _currentAddress;
-                                    clearOne('start');
-                                    addMarkers(_currentPosition.latitude,
-                                        _currentPosition.longitude, 'start');
-                                  },
-                                ),
-                                locationCallback: (String value) {
-                                  setState(() {
-                                    _startAddress = value;
-                                  });
-                                }),
-                            const SizedBox(height: 10),
-                            _textField(
-                                label: 'Điểm đến',
-                                hint: 'Chọn điểm đến',
-                                prefixIcon: InkWell(
-                                  child: Icon(
-                                    _choose == 'end'
-                                        ? Icons.location_on
-                                        : Icons.location_on_outlined,
-                                    color: Colors.redAccent,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      if (_choose == 'start') {
-                                        _choose = 'end';
-                                      } else {
-                                        _choose = 'start';
-                                      }
-                                    });
-                                  },
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: const Icon(
-                                    Icons.directions,
-                                    color: Colors.redAccent,
-                                  ),
-                                  onPressed: (_startAddress != '' &&
-                                          _destinationAddress != '')
-                                      ? () async {
-                                          startAddressFocusNode.unfocus();
-                                          desrinationAddressFocusNode.unfocus();
-                                          setState(() {
-                                            if (markers.isNotEmpty) {
-                                              markers.clear();
-                                            }
-                                            if (polylines.isNotEmpty) {
-                                              polylines.clear();
-                                            }
-                                            if (polylineCoordinates
-                                                .isNotEmpty) {
-                                              polylineCoordinates.clear();
-                                            }
-                                            _placeDistance = null;
-                                            _distance = null;
-                                            _duration = null;
-                                            _steps = null;
-                                          });
-
-                                          _calculateDistance()
-                                              .then((isCalculated) {
-                                            if (!isCalculated) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content:
-                                                      Text('Error chỉ đường'),
-                                                ),
-                                              );
-                                            }
-                                          });
-                                        }
-                                      : null,
-                                ),
-                                controller: destinationAddressController,
-                                focusNode: desrinationAddressFocusNode,
-                                width: width,
-                                locationCallback: (String value) {
-                                  setState(() {
-                                    _destinationAddress = value;
-                                  });
-                                }),
-                            const SizedBox(height: 5),
-                          ],
-                        ),
-                        InkWell(
-                          onTap: () {
-                            String nameStart = startAddressController.text;
-                            String addressStart = _startAddress;
-                            setState(() {
-                              startAddressController.text =
-                                  destinationAddressController.text;
-                              _startAddress = _destinationAddress;
-                              destinationAddressController.text = nameStart;
-                              _destinationAddress = addressStart;
-                            });
-                            if (polylines.isNotEmpty) {
-                              directionsRenderrer();
-                            }
-                          },
-                          child: const Align(
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                                height: 107,
-                                width: 45,
-                                // color: Colors.red,
-                                child: Icon(
-                                  Icons.swap_vert,
-                                  size: 28,
-                                )),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        CustomRadioButton(
-                            Icon(Icons.directions_car_outlined,
-                                size: 20,
-                                color: (modevalue == 0)
-                                    ? Colors.blueAccent
-                                    : Colors.black),
-                            "Xe hơi",
-                            0),
-                        CustomRadioButton(
-                            Icon(Icons.motorcycle_outlined,
-                                size: 20,
-                                color: (modevalue == 1)
-                                    ? Colors.blueAccent
-                                    : Colors.black),
-                            "Xe máy",
-                            1),
-                        CustomRadioButton(
-                            Icon(Icons.directions_bike_outlined,
-                                size: 20,
-                                color: (modevalue == 2)
-                                    ? Colors.blueAccent
-                                    : Colors.black),
-                            "Xe đạp",
-                            2),
-                        CustomRadioButton(
-                            Icon(Icons.directions_walk,
-                                size: 20,
-                                color: (modevalue == 3)
-                                    ? Colors.blueAccent
-                                    : Colors.black),
-                            "Đi bộ",
-                            3)
-                      ],
-                    ),
-                    // Visibility(
-                    //   visible: _distance == null ? false : true,
-                    //   child: Text(
-                    //     '${_duration ?? 0} phút (${_distance ?? 0} km)',
-                    //     style: const TextStyle(
-                    //       fontSize: 16,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          _steps == null ? Container() : bottomDetailsSheet(),
-        ],
+  Future<void> _navigateSearchAndChoose(
+      BuildContext context, String addressType) async {
+    setState(() {
+      _choose = addressType;
+    });
+    var result = await showSearchWidget(
+      context: context,
+      delegate: SearchChooseScreen(
+        location: choosePossition,
+        addressType: addressType,
+        searchFieldLabel:
+            addressType == 'start' ? "Chọn vị trí bắt đầu" : "Chọn điểm đến",
+        searchFieldStyle: const TextStyle(
+          color: Color.fromRGBO(158, 158, 158, 1),
+          fontSize: 18,
+        ),
       ),
     );
+    String name = "";
+    String address = "";
+    double lat;
+    double lng;
+    if (result is String) {
+      if (result == 'choosePossition') {
+        setState(() {
+          stack = 'choosePossition';
+          if (markers.isNotEmpty) markers.clear();
+          if (polylines.isNotEmpty) polylines.clear();
+          if (polylineCoordinates.isNotEmpty) {
+            polylineCoordinates.clear();
+          }
+          _placeDistance = null;
+          _distance = null;
+          _duration = null;
+          _steps = null;
+        });
+      }
+    } else {
+      setState(() {
+        stack = 'directionsRenderer';
+      });
+      PlaceDetail resultPlaceDetail = result;
+      name = resultPlaceDetail.name;
+      address =
+          '${resultPlaceDetail.location.lat},${resultPlaceDetail.location.lng}';
+      lat = resultPlaceDetail.location.lat;
+      lng = resultPlaceDetail.location.lng;
+      setState(() {
+        if (addressType == 'start') {
+          startAddressController.text = name;
+          _startAddress = address;
+        } else {
+          destinationAddressController.text = name;
+          _destinationAddress = address;
+        }
+      });
+      clearOne(addressType);
+      addMarkers(lat, lng, addressType);
+    }
   }
 
   Widget bottomDetailsSheet() {
@@ -497,7 +646,6 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
                     color: Colors.grey.shade300,
                     width: MediaQuery.of(context).size.width,
                   ),
-
                   Expanded(
                     child: ListView(
                       controller: scrollController,
@@ -546,20 +694,6 @@ class _DirectionsRendererScreenState extends State<DirectionsRendererScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   child: Container(
-                  //     color: Colors.grey,
-                  //     child: ListTile(
-                  //       title: Text(
-                  //         "Các chặng",
-                  //       ),
-                  //       leading: Icon(Icons.list),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),

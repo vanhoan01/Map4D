@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:map4dmap/model/model/PlaceDetail.dart';
-import 'package:map4dmap/view/search/components/search_results/ResultHorizontalItem.dart';
 import 'package:map4dmap/view/search/components/search_results/ResultVerticalItem.dart';
 
 class BottomPlaceListDetail extends StatelessWidget {
